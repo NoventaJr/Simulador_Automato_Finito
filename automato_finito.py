@@ -1,5 +1,10 @@
+#af é o dicionário que será utilizado para percorrer os estados do automato
+af = {}
+
 #Quantidade de estados
 n_estados = int(input())
+for x in range(n_estados):
+    af[x] = {}
 
 #Quantidade de símbolos terminais + símbolos terminais (uma linha)
 terminais = input()
@@ -15,8 +20,9 @@ n_iniciais = int(input())
 #Quantidade de estados de aceitação + estados de aceitação (uma linha)
 aceitacao = input()
 estados_aceitacao = aceitacao.split()
-n_estados_aceitacao = estados_aceitacao[0]
+n_estados_aceitacao = int(estados_aceitacao[0])
 estados_aceitacao.pop(0)
+estados_aceitacao = list(map(int, estados_aceitacao))
 
 #Quantidade de transições
 n_transicoes = int(input())
@@ -25,11 +31,10 @@ n_transicoes = int(input())
 for x in range(n_transicoes):
     transicao = input()
     transicao = transicao.split()
-    estado_inicial = transicao[0]
+    estado_inicial = int(transicao[0])
     simbolo = transicao[1]
-    estado_final = transicao[2]
-
-#Criar dicionario de dicionarios
+    estado_final = int(transicao[2])
+    af[estado_inicial][simbolo] = estado_final
 
 #Quantidade de cadeias a serem testadas
 n_cadeias = int(input())
@@ -38,10 +43,14 @@ for i in range(n_cadeias):
 
     #Testando para cada estado inicial
     for i in range(n_iniciais):
+        estado = i
         #Percorrendo os estados
         for x in cadeia:
-            print(dict[estado][x])      #Verificar se esta passando pelos estados corretamente, lembrar de apagar
-            estado = dict[estado][x]    #Trocando o estado
+            if x in af[estado]:
+                # print(af[estado][x])      #Verificar se esta passando pelos estados corretamente, lembrar de apagar
+                estado = af[estado][x]    #Trocando o estado
+            else:
+                break
 
         #Verificando se o estado final é o de aceitação
         if estado in estados_aceitacao:
