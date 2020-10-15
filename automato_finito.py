@@ -42,8 +42,8 @@ for i in range(n_cadeias):
     cadeia = input()
 
     #Testando para cada estado inicial
-    for i in range(n_iniciais):
-        estado = i
+    for k in range(n_iniciais):
+        estado = k
         #Percorrendo os estados
         for x in cadeia:
             if x in af[estado]:
@@ -59,5 +59,5 @@ for i in range(n_cadeias):
             break
         else:
             #Verificando se já percorreu todos os estados iniciais
-            if i == n_iniciais - 1:
+            if k == n_iniciais - 1:
                 print("rejeita")
