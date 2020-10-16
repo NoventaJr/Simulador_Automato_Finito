@@ -38,7 +38,7 @@ for x in range(n_transicoes):
         af[estado_inicial][simbolo] = []
     af[estado_inicial][simbolo].append(estado_final)
 
-print(af) 
+# print(af) 
 # print(estados_aceitacao)
 n_cadeias = int(input())
 
