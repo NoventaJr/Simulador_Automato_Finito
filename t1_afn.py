@@ -17,7 +17,7 @@ terminais = input()
 simb_terminais = terminais.split()
 n_simb_terminais = int(simb_terminais[0])
 if (n_simb_terminais > 10):
-    print('O número de símbolos terminais é 10')
+    print('O número máximo de símbolos terminais é 10')
     exit()
 simb_terminais.pop(0)
 
@@ -59,7 +59,7 @@ for x in range(n_transicoes):
 print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
 print(pprint.pformat(af))
 
-##converter AFN em AFD
+#>>>> CONVERTER EM AFD
 novos_estados = []
 novo_inicial = ''
 
@@ -71,29 +71,43 @@ if (novo_inicial not in af):
     novos_estados.append(novo_inicial)
 
 #tratar arcos lambda
-for estado in list(af.keys()):
-    if '-' in list(af[estado].keys()):
-        destinos_lambda = af[estado]['-']
-
-        #adiciona o destinos do arco lambda a todas as transições, caso não esteja
-        for simb in simb_terminais:
-            af[estado][simb].extend([e for e in destinos_lambda if e not in af[estado][simb]])
+if '-' in simb_terminais:
+    #estado origem e destino se referem a origem e destino de cada arco lambda
+    for estado_origem in list(af.keys()):
+        destinos_lambda = af[estado_origem]['-']    #todos os estados alcançáveis com uma ou mais transição lambda
 
         #para cada destino de lambda
-        for destino in destinos_lambda:
-            #adiciona a transição à origem de lambda caso não esteja
-            for simb in af[destino]:
-                af[estado][simb].extend([e for e in af[destino][simb] if e not in af[estado][simb]])
-            
-            #se o destino do arco-lambda for final, agora a origem tbm é
-            if destino in estados_aceitacao:
-                estados_aceitacao.append(estado)
+        for estado_destino in destinos_lambda:
+            destinos_lambda.extend(af[estado_destino]['-'])    #coloca adiciona as transições lambda do destino às transições lambda da origem
+    
+            for simb in af[estado_destino]:
+                af[estado_origem][simb].extend(af[estado_destino][simb])  #adiciona as transições 'simb' do destino lambda às transições 'simb' da origem
+                af[estado_origem][simb].extend(af[estado_destino]['-'])   #adiciona as transições lambda do destino lambda
+                
+                #se houver transição 'simb' para o próprio estado, adiciona o destino lambda a transição 'simb' da origem 
+                if estado_origem in af[estado_origem][simb]:
+                    af[estado_origem][simb].extend(destinos_lambda)
 
-        #remove arco lambda
+            #se o destino do arco lambda for estado de aceitação, o estado origem tbm é
+            if estado_destino in estados_aceitacao:
+                estados_aceitacao.append(estado_origem)
+
+        #adiciona à transição 'simb' do estado_origem os destinos das transições lambdas do estado_destino
+        for simb in list(af[estado_origem].keys()):
+            destinos_simb = af[estado_origem][simb]
+            
+            for destino_simb in destinos_simb:
+                af[estado_origem][simb].extend(af[destino_simb]['-'])
+
+    #apagar arcos lambda e remover repetições
+    for estado in list(af.keys()):
         del af[estado]['-']
 
-print('\nTransições após tratar arcos-lambda:')
-print(pprint.pformat(af))
+        for simb in list(af[estado].keys()):
+            af[estado][simb] = list(set(af[estado][simb]))
+
+    print('\nTransições após tratar arcos-lambda:')
+    print(pprint.pformat(af))
 
 #para estados com mais de uma transição com mesmo simbolo terminal,
 #cria novo estado sendo a junção deles
@@ -134,7 +148,7 @@ for novo_estado in novos_estados:
         if (destino not in af) and (destino != ''):
             novos_estados.append(destino)
 
-#arrumar tipos de dados
+#tirar elementos das listas
 for estado in list(af.keys()):
     for simb in list(af[estado].keys()):
         elem = af[estado][simb]
@@ -160,19 +174,6 @@ for estado in af.keys():
         if c in estados_aceitacao and estado not in estados_aceitacao:
             estados_aceitacao.append(estado)
 
-
-""" #definir estados acessíveis (opcional)
-estados_acessiveis = [novo_inicial]
-for estado in af.keys():
-    for simb in af[estado].keys():
-        if af[estado][simb] not in estados_acessiveis:
-            estados_acessiveis.append(af[estado][simb])
-
-print("Estados acessíveis: {}".format(estados_acessiveis))
-#remover estados inacessíveis (opcional)
-for estado in list(af.keys()):
-    if estado not in estados_acessiveis:
-        del af[estado] """
 
 print("\nNovo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
 print(pprint.pformat(af))
@@ -202,7 +203,7 @@ for i in range(n_cadeias):
     #Percorrendo os estados
     for x in cadeia:
         if x in af[estado]:
-            print("{}: from {} to {}".format(x, estado, af[estado][x]))
+            #print("{}: from {} to {}".format(x, estado, af[estado][x]))
             estado = af[estado][x]    #Trocando o estado
             processed += 1
         else:
