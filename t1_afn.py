@@ -59,8 +59,8 @@ for x in range(n_transicoes):
     #Verifica se aparece arco lambda
     if simbolo == '-':  tem_arco_lambda = 1
 
-print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
-print(pprint.pformat(af))
+# print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
+# print(pprint.pformat(af))
 
 #>>>> CONVERTER EM AFD
 novos_estados = []
@@ -82,7 +82,7 @@ if '-' in simb_terminais or tem_arco_lambda == 1:
         #para cada destino de lambda
         for estado_destino in destinos_lambda:
             destinos_lambda.extend(af[estado_destino]['-'])    #adiciona as transições lambda do destino às transições lambda da origem
-    
+
             for simb in af[estado_destino]:
                 af[estado_origem][simb].extend(af[estado_destino][simb])  #adiciona as transições 'simb' do destino lambda às transições 'simb' da origem
                 af[estado_origem][simb].extend(af[estado_destino]['-'])   #adiciona as transições lambda do destino lambda
@@ -109,8 +109,8 @@ if '-' in simb_terminais or tem_arco_lambda == 1:
         for simb in list(af[estado].keys()):
             af[estado][simb] = list(set(af[estado][simb]))
 
-    print('\nTransições após tratar arcos-lambda:')
-    print(pprint.pformat(af))
+    # print('\nTransições após tratar arcos-lambda:')
+    # print(pprint.pformat(af))
 
 #para estados com mais de uma transição com mesmo simbolo terminal,
 #cria novo estado sendo a junção deles
@@ -177,8 +177,8 @@ for estado in af.keys():
         if c in estados_aceitacao and estado not in estados_aceitacao:
             estados_aceitacao.append(estado)
 
-print("\nNovo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
-print(pprint.pformat(af))
+# print("\nNovo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
+# print(pprint.pformat(af))
 
 #Quantidade de cadeias a serem testadas
 n_cadeias = int(input())
@@ -189,7 +189,7 @@ if (n_cadeias > 10):
 #testando para cada cadeia
 for i in range(n_cadeias):
     cadeia = input().strip()
-    print(cadeia)
+    # print(cadeia)
 
     if (len(cadeia) > 20):
         print('O comprimento máximo de cada cadeia é 20')
@@ -214,6 +214,6 @@ for i in range(n_cadeias):
     #print("{} in aceitacao and {} == {}".format(estado, processed, len(cadeia.strip())))
     if (estado in estados_aceitacao) and (processed == len(cadeia)):
         #Se o estado final for de aceitação, não é necessário testar para os outros estados iniciais
-        print("aceita\n")
+        print("aceita")
     else:
-        print("rejeita\n")
+        print("rejeita")
