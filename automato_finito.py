@@ -38,9 +38,8 @@ for x in range(n_transicoes):
         af[estado_inicial][simbolo] = []
     af[estado_inicial][simbolo].append(estado_final)
 
-# print(af) 
+print(af) 
 # print(estados_aceitacao)
-
 n_cadeias = int(input())
 
 #Função pra verificar se cadeia é valida
@@ -58,8 +57,6 @@ def verificacao(af, cadeia, pos, estado):
         else:
             for caminho in range(len(af[estado][x])):
                 # print(af[estado][x][caminho])
-                #print("{}: from {} to {}".format(x, estado, af[estado][x][caminho]))
-
                 if verificacao(af, cadeia, pos + 1, af[estado][x][caminho]) == 1:
                     return 1
             return 0
@@ -69,11 +66,6 @@ def verificacao(af, cadeia, pos, estado):
 #Quantidade de cadeias a serem testadas
 for i in range(n_cadeias):
     cadeia = input()
-    #print(cadeia)
-    
-    # for j in range(len(cadeia)):
-    #     print(j)
-    #     print(cadeia[j])
 
     #Testando para cada estado inicial
     for k in range(n_iniciais):
@@ -83,3 +75,4 @@ for i in range(n_cadeias):
         else:
             if k == n_iniciais - 1:
                 print("rejeita")
+        
