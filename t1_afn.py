@@ -56,6 +56,8 @@ for x in range(n_transicoes):
     simbolo = transicao[1]
     estado_final = transicao[2]
     af[estado_inicial][simbolo].append(estado_final)
+    #Verifica se aparece arco lambda
+    if simbolo == '-':  tem_arco_lambda = 1
 
 print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
 print(pprint.pformat(af))
@@ -72,7 +74,7 @@ if (novo_inicial not in af):
     novos_estados.append(novo_inicial)
 
 #tratar arcos lambda
-if '-' in simb_terminais:
+if '-' in simb_terminais or tem_arco_lambda == 1:
     #estado origem e destino se referem a origem e destino de cada arco lambda
     for estado_origem in list(af.keys()):
         destinos_lambda = af[estado_origem]['-']    #todos os estados alcançáveis com uma ou mais transição lambda
