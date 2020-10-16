@@ -43,19 +43,21 @@ if (n_transicoes > 50):
     exit()
 
 #Transições
+for estado in af.keys():
+    for simbolo in simb_terminais:
+        af[estado][simbolo] = []
+
 for x in range(n_transicoes):
     transicao = input()
     transicao = transicao.split()
     estado_inicial = transicao[0]
     simbolo = transicao[1]
     estado_final = transicao[2]
-        
-    if (simbolo not in af[estado_inicial]):
-        af[estado_inicial][simbolo] = []
 
     af[estado_inicial][simbolo].append(estado_final)
 
-pprint.pprint(af)
+print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
+print(pprint.pformat(af))
 
 ##converter AFN em AFD
 novos_estados = []
@@ -68,13 +70,37 @@ for est_inicial in range(n_iniciais):
 if (novo_inicial not in af):
     novos_estados.append(novo_inicial)
 
+#tratar arcos lambda
+for estado in list(af.keys()):
+    if '-' in list(af[estado].keys()):
+        destinos_lambda = af[estado]['-']
+
+        #adiciona o destinos do arco lambda a todas as transições, caso não esteja
+        for simb in simb_terminais:
+            af[estado][simb].extend([e for e in destinos_lambda if e not in af[estado][simb]])
+
+        #para cada destino de lambda
+        for destino in destinos_lambda:
+            #adiciona a transição à origem de lambda caso não esteja
+            for simb in af[destino]:
+                af[estado][simb].extend([e for e in af[destino][simb] if e not in af[estado][simb]])
+            
+            #se o destino do arco-lambda for final, agora a origem tbm é
+            if destino in estados_aceitacao:
+                estados_aceitacao.append(estado)
+
+        #remove arco lambda
+        del af[estado]['-']
+
+print('\nTransições após tratar arcos-lambda:')
+print(pprint.pformat(af))
+
 #para estados com mais de uma transição com mesmo simbolo terminal,
 #cria novo estado sendo a junção deles
 for estado in af.keys():
     for simb in af[estado].keys():
         if len(af[estado][simb]) > 1:
             novo_estado = ''.join(sorted(af[estado][simb])) #junta todos os elementos da lista, ordenados (para evitar duplicações)
-
             novos_estados.append(novo_estado)
             af[estado][simb] = novo_estado
 
@@ -119,10 +145,13 @@ for estado in list(af.keys()):
                 #del af[estado][simb]
                 break
             #se tiver só 1 elemento, coloca como string
-            else:
+            elif len(elem) == 1:
                 af[estado][simb] = af[estado][simb][0]
+            else:
+                del af[estado][simb]
+
         #remove se for vazio
-        if (af[estado][simb] == ''):
+        elif (af[estado][simb] == ''):
             del af[estado][simb]
 
 #definir novos estados de aceitação
@@ -131,7 +160,8 @@ for estado in af.keys():
         if c in estados_aceitacao and estado not in estados_aceitacao:
             estados_aceitacao.append(estado)
 
-#definir estados acessíveis (opcional)
+
+""" #definir estados acessíveis (opcional)
 estados_acessiveis = [novo_inicial]
 for estado in af.keys():
     for simb in af[estado].keys():
@@ -142,9 +172,9 @@ print("Estados acessíveis: {}".format(estados_acessiveis))
 #remover estados inacessíveis (opcional)
 for estado in list(af.keys()):
     if estado not in estados_acessiveis:
-        del af[estado]
+        del af[estado] """
 
-print("Novo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
+print("\nNovo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
 print(pprint.pformat(af))
 
 
@@ -156,7 +186,7 @@ if (n_cadeias > 10):
 
 #testando para cada cadeia
 for i in range(n_cadeias):
-    cadeia = input()
+    cadeia = input().strip()
     print(cadeia)
 
     if (len(cadeia) > 20):
@@ -165,6 +195,9 @@ for i in range(n_cadeias):
 
     processed = 0
     estado = novo_inicial
+
+    if cadeia == '-':
+        cadeia = ''
 
     #Percorrendo os estados
     for x in cadeia:
@@ -177,7 +210,7 @@ for i in range(n_cadeias):
 
     #Verificando se o estado final é o de aceitação
     #print("{} in aceitacao and {} == {}".format(estado, processed, len(cadeia.strip())))
-    if (estado in estados_aceitacao) and (processed == len(cadeia.strip())):
+    if (estado in estados_aceitacao) and (processed == len(cadeia)):
         #Se o estado final for de aceitação, não é necessário testar para os outros estados iniciais
         print("aceita\n")
     else:
