@@ -34,30 +34,48 @@ for x in range(n_transicoes):
     estado_inicial = int(transicao[0])
     simbolo = transicao[1]
     estado_final = int(transicao[2])
-    af[estado_inicial][simbolo] = estado_final
+    if simbolo not in af[estado_inicial]:
+        af[estado_inicial][simbolo] = []
+    af[estado_inicial][simbolo].append(estado_final)
+
+# print(af) 
+# print(estados_aceitacao)
+n_cadeias = int(input())
+
+#Função pra verificar se cadeia é valida
+def verificacao(af, cadeia, pos, estado):
+    #Função recursiva  
+    x = cadeia[pos]
+
+    if x in af[estado]:
+        if pos == len(cadeia) - 1:
+            # if estado in estados_aceitacao: return 1
+            for caminho in range(len(af[estado][x])):
+                if af[estado][x][caminho] in estados_aceitacao:
+                    return 1
+            return 0
+        else:
+            for caminho in range(len(af[estado][x])):
+                # print(af[estado][x][caminho])
+                if verificacao(af, cadeia, pos + 1, af[estado][x][caminho]) == 1:
+                    return 1
+            return 0
+    else:
+        return 0
 
 #Quantidade de cadeias a serem testadas
-n_cadeias = int(input())
 for i in range(n_cadeias):
     cadeia = input()
+    # for j in range(len(cadeia)):
+    #     print(j)
+    #     print(cadeia[j])
 
     #Testando para cada estado inicial
     for k in range(n_iniciais):
-        estado = k
-        #Percorrendo os estados
-        for x in cadeia:
-            if x in af[estado]:
-                # print(af[estado][x])      #Verificar se esta passando pelos estados corretamente, lembrar de apagar
-                estado = af[estado][x]    #Trocando o estado
-            else:
-                break
-
-        #Verificando se o estado final é o de aceitação
-        if estado in estados_aceitacao:
-            #Se o estado final for de aceitação, não é necessário testar para os outros estados iniciais
+        if verificacao(af, cadeia, 0, k) == 1:
             print("aceita")
             break
         else:
-            #Verificando se já percorreu todos os estados iniciais
             if k == n_iniciais - 1:
                 print("rejeita")
+        
