@@ -9,6 +9,7 @@ if (n_estados > 10 or n_estados < 1):
     print('O número de estados deve ser no mínimo 1 e no máximo 10')
     exit()
     
+#Inicializando o dicionário (transições) para cada estado
 for x in range(n_estados):
     af[str(x)] = {}
 
@@ -23,7 +24,7 @@ simb_terminais.pop(0)
 
 #Quantidade de estados iniciais
 #AFD = 1, estado_inicial = q0
-#AFN = n (n > 1), estado_inicial = [q0, q1, ..., qn]
+#AFN = n (n >= 1), estado_inicial = [q0, q1, ..., qn]
 n_iniciais = int(input())
 if (n_iniciais > 10):
     print('O número máximo de estados inicias é 10')
@@ -42,18 +43,18 @@ if (n_transicoes > 50):
     print('O número máximo de transições é 50')
     exit()
 
-#Transições
+#Inicializando listas (para múltiplos estados q') para cada símbolo de cada estado
 for estado in af.keys():
     for simbolo in simb_terminais:
         af[estado][simbolo] = []
 
+#Transições
 for x in range(n_transicoes):
     transicao = input()
     transicao = transicao.split()
     estado_inicial = transicao[0]
     simbolo = transicao[1]
     estado_final = transicao[2]
-
     af[estado_inicial][simbolo].append(estado_final)
 
 print("Antigos estados inicial: {}\nAntigos estados de aceitacão: {}\nAntigas transições:".format(list(range(n_iniciais)), estados_aceitacao))
@@ -78,7 +79,7 @@ if '-' in simb_terminais:
 
         #para cada destino de lambda
         for estado_destino in destinos_lambda:
-            destinos_lambda.extend(af[estado_destino]['-'])    #coloca adiciona as transições lambda do destino às transições lambda da origem
+            destinos_lambda.extend(af[estado_destino]['-'])    #adiciona as transições lambda do destino às transições lambda da origem
     
             for simb in af[estado_destino]:
                 af[estado_origem][simb].extend(af[estado_destino][simb])  #adiciona as transições 'simb' do destino lambda às transições 'simb' da origem
@@ -174,10 +175,8 @@ for estado in af.keys():
         if c in estados_aceitacao and estado not in estados_aceitacao:
             estados_aceitacao.append(estado)
 
-
 print("\nNovo estado inicial: {}\nNovos estados de aceitacão: {}\nNovas transições:".format(novo_inicial, estados_aceitacao))
 print(pprint.pformat(af))
-
 
 #Quantidade de cadeias a serem testadas
 n_cadeias = int(input())
