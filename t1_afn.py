@@ -49,6 +49,7 @@ for estado in af.keys():
         af[estado][simbolo] = []
 
 #Transições
+tem_arco_lambda = 0
 for x in range(n_transicoes):
     transicao = input()
     transicao = transicao.split()
